@@ -1,76 +1,169 @@
 
-# 1. Import thu vien
+# 1. Import thư viện
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# 2. Tao du lieu
+# 2. Cấu hình giao diện
+st.set_page_config(
+    page_title="Quản lý điểm sinh viên",
+    page_icon="🎓",
+    layout="wide"
+)
+
+# 3. Tạo dữ liệu
 data = {
-    "Ho_ten": ["An", "Binh", "Cuong", "Dung", "Ha",
-               "Lan", "Minh", "Nam", "Phuc", "Linh"],
-    "Chuyen_can": [9, 8, 7, 10, 6, 8, 9, 5, 7, 10],
-    "Giua_ky": [8, 7, 6, 9, 5, 8, 7, 4, 6, 9],
-    "Cuoi_ky": [9, 8, 7, 8, 6, 9, 8, 5, 7, 10]
+    "Họ và tên": [
+        "An", "Bình", "Cường", "Dũng", "Hà",
+        "Lan", "Minh", "Nam", "Phúc", "Linh"
+    ],
+    "Chuyên cần": [9, 8, 7, 10, 6, 8, 9, 5, 7, 10],
+    "Giữa kỳ": [8, 7, 6, 9, 5, 8, 7, 4, 6, 9],
+    "Cuối kỳ": [9, 8, 7, 8, 6, 9, 8, 5, 7, 10]
 }
 
 df = pd.DataFrame(data)
 
-# 3. Tinh diem
-df["Tong_ket"] = (
-    0.2 * df["Chuyen_can"]
-    + 0.3 * df["Giua_ky"]
-    + 0.5 * df["Cuoi_ky"]
+# 4. Tính điểm tổng kết
+df["Tổng kết"] = (
+    0.2 * df["Chuyên cần"]
+    + 0.3 * df["Giữa kỳ"]
+    + 0.5 * df["Cuối kỳ"]
 )
 
-# 4. Xep loai
+# 5. Xếp loại
 def xep_loai(diem):
     if diem >= 8.5:
-        return "Gioi"
+        return "Giỏi"
     elif diem >= 7:
-        return "Kha"
+        return "Khá"
     elif diem >= 5:
-        return "Trung binh"
+        return "Trung bình"
     else:
-        return "Yeu"
+        return "Yếu"
 
-df["Xep_loai"] = df["Tong_ket"].apply(xep_loai)
+df["Xếp loại"] = df["Tổng kết"].apply(xep_loai)
 
-# 5. Tieu de va bang diem
-st.title("QUẢN LÝ ĐIỂM SINH VIÊN")
+# 6. Tiêu đề
+st.title("🎓 QUẢN LÝ ĐIỂM SINH VIÊN")
+st.caption("Hệ thống thống kê và theo dõi kết quả học tập")
+st.divider()
 
-st.subheader("Bảng điểm")
-st.dataframe(df)
+# 7. Thống kê tổng quan
+diem_tb = df["Tổng kết"].mean()
+sv_cao = df.loc[df["Tổng kết"].idxmax()]
+sv_thap = df.loc[df["Tổng kết"].idxmin()]
+so_dat = (df["Tổng kết"] >= 5).sum()
 
-# 6. Thong ke
-st.subheader("Thống kê")
+st.subheader("📊 Tổng quan kết quả")
 
-st.write("Điểm trung bình:", round(df["Tong_ket"].mean(), 2))
-st.write("Cao nhất:", df.loc[df["Tong_ket"].idxmax(), "Ho_ten"])
-st.write("Thấp nhất:", df.loc[df["Tong_ket"].idxmin(), "Ho_ten"])
-st.write("Số sinh viên đạt:", (df["Tong_ket"] >= 5).sum())
+c1, c2, c3, c4 = st.columns(4)
 
-# 7. Chon sinh vien
-st.subheader("Thông tin sinh viên")
+c1.metric("Điểm trung bình", f"{diem_tb:.2f}/10")
+c2.metric("Điểm cao nhất", f"{sv_cao['Tổng kết']:.2f}")
+c3.metric("Điểm thấp nhất", f"{sv_thap['Tổng kết']:.2f}")
+c4.metric("Số sinh viên đạt", f"{so_dat}/10")
 
-ten = st.selectbox("Chon sinh vien", df["Ho_ten"])
-sv = df[df["Ho_ten"] == ten].iloc[0]
+st.caption(
+    f"🏆 Điểm cao nhất: {sv_cao['Họ và tên']} | "
+    f"📌 Điểm thấp nhất: {sv_thap['Họ và tên']}"
+)
 
-st.write("Chuyen can:", sv["Chuyen_can"])
-st.write("Giua ky:", sv["Giua_ky"])
-st.write("Cuoi ky:", sv["Cuoi_ky"])
-st.write("Tong ket:", round(sv["Tong_ket"], 2))
-st.write("Xep loai:", sv["Xep_loai"])
+st.divider()
 
-# 8. Bieu do
-st.subheader("Bieu do diem tong ket")
+# 8. Bảng điểm
+st.subheader("📋 Bảng điểm chi tiết")
 
-fig, ax = plt.subplots()
-ax.bar(df["Ho_ten"], df["Tong_ket"])
-ax.set_xlabel("Ho ten")
-ax.set_ylabel("Diem")
-ax.set_ylim(0, 10)
+st.dataframe(
+    df.style.format({
+        "Chuyên cần": "{:.1f}",
+        "Giữa kỳ": "{:.1f}",
+        "Cuối kỳ": "{:.1f}",
+        "Tổng kết": "{:.2f}"
+    }).background_gradient(
+        subset=["Tổng kết"],
+        cmap="RdYlGn",
+        vmin=0,
+        vmax=10
+    ),
+    use_container_width=True,
+    hide_index=True
+)
 
+st.divider()
+
+# 9. Tra cứu sinh viên
+st.subheader("👤 Tra cứu thông tin sinh viên")
+
+ten = st.selectbox("Chọn sinh viên", df["Họ và tên"])
+sv = df[df["Họ và tên"] == ten].iloc[0]
+
+a, b, c = st.columns(3)
+
+a.metric("Điểm chuyên cần", f"{sv['Chuyên cần']:.1f}")
+b.metric("Điểm giữa kỳ", f"{sv['Giữa kỳ']:.1f}")
+c.metric("Điểm cuối kỳ", f"{sv['Cuối kỳ']:.1f}")
+
+x, y = st.columns(2)
+
+x.metric("ĐIỂM TỔNG KẾT", f"{sv['Tổng kết']:.2f}/10")
+y.metric("XẾP LOẠI", sv["Xếp loại"])
+
+st.divider()
+
+# 10. Biểu đồ
+st.subheader("📈 Biểu đồ điểm tổng kết")
+
+fig, ax = plt.subplots(figsize=(11, 4))
+
+mau = [
+    "#16A34A" if d >= 8.5
+    else "#2563EB" if d >= 7
+    else "#F59E0B" if d >= 5
+    else "#DC2626"
+    for d in df["Tổng kết"]
+]
+
+cot = ax.bar(
+    df["Họ và tên"],
+    df["Tổng kết"],
+    color=mau,
+    edgecolor="white",
+    width=0.7
+)
+
+ax.axhline(
+    diem_tb,
+    color="#7C3AED",
+    linestyle="--",
+    label=f"Điểm trung bình: {diem_tb:.2f}"
+)
+
+ax.bar_label(cot, fmt="%.2f", padding=3, fontsize=9)
+ax.set_ylim(0, 11)
+ax.set_ylabel("Điểm số")
+ax.set_xlabel("Họ và tên sinh viên")
+ax.set_title("SO SÁNH ĐIỂM TỔNG KẾT")
+ax.grid(axis="y", linestyle=":", alpha=0.4)
+ax.legend()
+ax.spines["top"].set_visible(False)
+ax.spines["right"].set_visible(False)
+
+plt.tight_layout()
 st.pyplot(fig)
+plt.close(fig)
 
-# 9. Thong tin nguoi tao
-st.caption("Nguoi tao: Cao Hoai Thong | MSSV: 052208010748")
+st.caption(
+    "🟢 Giỏi | 🔵 Khá | 🟠 Trung bình | 🔴 Yếu"
+)
+
+st.divider()
+
+# 11. Chân trang
+st.markdown(
+    "<div style='text-align:center; color:gray; font-size:12px;'>"
+    "QUẢN LÝ ĐIỂM SINH VIÊN<br>"
+    "Người tạo: HỌ TÊN CỦA BẠN | MSSV: MÃ SỐ CỦA BẠN"
+    "</div>",
+    unsafe_allow_html=True
+)
