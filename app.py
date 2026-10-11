@@ -100,6 +100,106 @@ hr {
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
 }
+
+/* Tieu de cac khu vuc */
+.section-title {
+    font-size: 28px;
+    font-weight: 850;
+    color: #123b70;
+    padding: 16px 22px;
+    margin: 18px 0 22px 0;
+    background: linear-gradient(120deg, #ffffff, #dbeafe);
+    border-left: 7px solid #2563eb;
+    border-radius: 14px;
+    box-shadow:
+        0 5px 0 #bfdbfe,
+        0 10px 18px rgba(30, 64, 175, 0.16);
+    text-shadow: 1px 1px 1px rgba(15, 23, 42, 0.08);
+}
+
+/* The thong ke 3D */
+div[data-testid="stColumn"] .metric-card {
+    border-radius: 18px;
+    padding: 8px;
+    margin-bottom: 16px;
+    background: #ffffff;
+    box-shadow:
+        0 6px 0 #cbd5e1,
+        0 12px 20px rgba(15, 23, 42, 0.14);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+div[data-testid="stColumn"] .metric-card:hover {
+    transform: translateY(-6px);
+    box-shadow:
+        0 10px 0 #cbd5e1,
+        0 20px 28px rgba(15, 23, 42, 0.20);
+}
+
+/* Vien mau cho tung the */
+.metric-card.blue {
+    border-top: 5px solid #2563eb;
+}
+
+.metric-card.green {
+    border-top: 5px solid #16a34a;
+}
+
+.metric-card.red {
+    border-top: 5px solid #dc2626;
+}
+
+.metric-card.purple {
+    border-top: 5px solid #7c3aed;
+}
+
+/* Khung noi dung */
+.content-card {
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid #dbeafe;
+    border-radius: 20px;
+    padding: 22px;
+    margin: 10px 0 25px 0;
+    box-shadow:
+        0 7px 0 #dbeafe,
+        0 14px 25px rgba(30, 64, 175, 0.13);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.content-card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 10px 0 #bfdbfe,
+        0 20px 32px rgba(30, 64, 175, 0.18);
+}
+
+/* Ten sinh vien */
+.student-name {
+    font-size: 30px;
+    font-weight: 800;
+    color: #1d4ed8;
+    padding: 18px;
+    margin: 15px 0;
+    border-radius: 14px;
+    background: linear-gradient(120deg, #eff6ff, #ffffff);
+    box-shadow:
+        0 5px 0 #bfdbfe,
+        0 10px 18px rgba(37, 99, 235, 0.12);
+}
+
+/* Nut va hop chon */
+.stButton button,
+div[data-baseweb="select"] > div {
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.stButton button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 #bfdbfe,
+                0 9px 15px rgba(37, 99, 235, 0.15);
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -157,30 +257,57 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
+
 # 7. Thống kê tổng quan
 diem_tb = df["Tổng kết"].mean()
 sv_cao = df.loc[df["Tổng kết"].idxmax()]
 sv_thap = df.loc[df["Tổng kết"].idxmin()]
 so_dat = (df["Tổng kết"] >= 5).sum()
 
-st.subheader("📊 Tổng quan kết quả")
+st.markdown("""
+<div class="section-title">
+    📊 TỔNG QUAN KẾT QUẢ
+</div>
+""", unsafe_allow_html=True)
 
 c1, c2, c3, c4 = st.columns(4)
 
-c1.metric("Điểm trung bình", f"{diem_tb:.2f}/10")
-c2.metric("Điểm cao nhất", f"{sv_cao['Tổng kết']:.2f}")
-c3.metric("Điểm thấp nhất", f"{sv_thap['Tổng kết']:.2f}")
-c4.metric("Số sinh viên đạt", f"{so_dat}/10")
+with c1:
+    st.markdown('<div class="metric-card blue">', unsafe_allow_html=True)
+    st.metric("📈 Điểm trung bình", f"{diem_tb:.2f}/10")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-st.caption(
-    f"🏆 Điểm cao nhất: {sv_cao['Họ và tên']} | "
-    f"📌 Điểm thấp nhất: {sv_thap['Họ và tên']}"
+with c2:
+    st.markdown('<div class="metric-card green">', unsafe_allow_html=True)
+    st.metric("🏆 Điểm cao nhất", f"{sv_cao['Tổng kết']:.2f}")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with c3:
+    st.markdown('<div class="metric-card red">', unsafe_allow_html=True)
+    st.metric("📉 Điểm thấp nhất", f"{sv_thap['Tổng kết']:.2f}")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with c4:
+    st.markdown('<div class="metric-card purple">', unsafe_allow_html=True)
+    st.metric("🎯 Sinh viên đạt", f"{so_dat}/{len(df)}")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+st.info(
+    f"🏅 Sinh viên có điểm cao nhất: **{sv_cao['Họ và tên']}** "
+    f"({sv_cao['Tổng kết']:.2f} điểm)"
 )
 
 st.divider()
 
+
 # 8. Bảng điểm
-st.subheader("📋 Bảng điểm chi tiết")
+st.markdown("""
+<div class="section-title">
+    📋 BẢNG ĐIỂM CHI TIẾT
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown('<div class="content-card">', unsafe_allow_html=True)
 
 st.dataframe(
     df.style.format({
@@ -195,34 +322,58 @@ st.dataframe(
         vmax=10
     ),
     use_container_width=True,
-    hide_index=True
+    hide_index=True,
+    height=420
 )
 
+st.markdown('</div>', unsafe_allow_html=True)
+st.caption("💡 Điểm tổng kết được tô màu để dễ nhận biết kết quả.")
 st.divider()
 
-# 9. Tra cứu sinh viên
-st.subheader("👤 Tra cứu thông tin sinh viên")
 
-ten = st.selectbox("Chọn sinh viên", df["Họ và tên"])
+# 9. Tra cứu sinh viên
+st.markdown("""
+<div class="section-title">
+    👤 TRA CỨU THÔNG TIN SINH VIÊN
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown('<div class="content-card">', unsafe_allow_html=True)
+
+ten = st.selectbox("🔎 Chọn sinh viên cần tra cứu", df["Họ và tên"])
 sv = df[df["Họ và tên"] == ten].iloc[0]
 
-a, b, c = st.columns(3)
+st.markdown(
+    f"<div class='student-name'>🎓 {sv['Họ và tên']}</div>",
+    unsafe_allow_html=True
+)
 
-a.metric("Điểm chuyên cần", f"{sv['Chuyên cần']:.1f}")
-b.metric("Điểm giữa kỳ", f"{sv['Giữa kỳ']:.1f}")
-c.metric("Điểm cuối kỳ", f"{sv['Cuối kỳ']:.1f}")
+a, b, c = st.columns(3)
+a.metric("📘 Điểm chuyên cần", f"{sv['Chuyên cần']:.1f}/10")
+b.metric("📗 Điểm giữa kỳ", f"{sv['Giữa kỳ']:.1f}/10")
+c.metric("📕 Điểm cuối kỳ", f"{sv['Cuối kỳ']:.1f}/10")
 
 x, y = st.columns(2)
 
-x.metric("ĐIỂM TỔNG KẾT", f"{sv['Tổng kết']:.2f}/10")
-y.metric("XẾP LOẠI", sv["Xếp loại"])
+x.metric("⭐ ĐIỂM TỔNG KẾT", f"{sv['Tổng kết']:.2f}/10")
+y.metric("🎯 XẾP LOẠI", sv["Xếp loại"])
 
+st.markdown('</div>', unsafe_allow_html=True)
 st.divider()
 
-# 10. Biểu đồ
-st.subheader("📈 Biểu đồ điểm tổng kết")
 
-fig, ax = plt.subplots(figsize=(11, 4))
+# 10. Biểu đồ
+st.markdown("""
+<div class="section-title">
+    📈 PHÂN TÍCH KẾT QUẢ HỌC TẬP
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown('<div class="content-card">', unsafe_allow_html=True)
+
+fig, ax = plt.subplots(figsize=(12, 5))
+fig.patch.set_facecolor("#f8fafc")
+ax.set_facecolor("#f8fafc")
 
 mau = [
     "#16A34A" if d >= 8.5
@@ -236,35 +387,62 @@ cot = ax.bar(
     df["Họ và tên"],
     df["Tổng kết"],
     color=mau,
+    width=0.65,
     edgecolor="white",
-    width=0.7
+    linewidth=2,
+    zorder=3
 )
+
+# Tạo bóng đổ lệch nhẹ cho từng cột
+for bar in cot:
+    x = bar.get_x()
+    y = bar.get_height()
+    w = bar.get_width()
+
+    ax.bar(
+        x + 0.035, y,
+        width=w,
+        color="#94a3b8",
+        alpha=0.22,
+        zorder=2
+    )
 
 ax.axhline(
     diem_tb,
     color="#7C3AED",
     linestyle="--",
-    label=f"Điểm trung bình: {diem_tb:.2f}"
+    linewidth=2.5,
+    label=f"Điểm trung bình: {diem_tb:.2f}",
+    zorder=4
 )
 
-ax.bar_label(cot, fmt="%.2f", padding=3, fontsize=9)
+ax.bar_label(cot, fmt="%.2f", padding=5, fontsize=10, fontweight="bold")
+
 ax.set_ylim(0, 11)
-ax.set_ylabel("Điểm số")
-ax.set_xlabel("Họ và tên sinh viên")
-ax.set_title("SO SÁNH ĐIỂM TỔNG KẾT")
-ax.grid(axis="y", linestyle=":", alpha=0.4)
-ax.legend()
+ax.set_ylabel("Điểm số", fontsize=12)
+ax.set_xlabel("Sinh viên", fontsize=12)
+ax.set_title(
+    "SO SÁNH ĐIỂM TỔNG KẾT",
+    fontsize=16,
+    fontweight="bold",
+    pad=20
+)
+
+ax.grid(axis="y", linestyle=":", alpha=0.3, zorder=1)
+ax.legend(fontsize=11)
 ax.spines["top"].set_visible(False)
 ax.spines["right"].set_visible(False)
 
+plt.xticks(fontsize=10)
+plt.yticks(fontsize=10)
 plt.tight_layout()
-st.pyplot(fig)
+
+st.pyplot(fig, use_container_width=True)
 plt.close(fig)
 
-st.caption(
-    "🟢 Giỏi | 🔵 Khá | 🟠 Trung bình | 🔴 Yếu"
-)
+st.markdown('</div>', unsafe_allow_html=True)
 
+st.caption("🟢 Giỏi  |  🔵 Khá  |  🟠 Trung bình  |  🔴 Yếu")
 st.divider()
 
 # 11. Chân trang
