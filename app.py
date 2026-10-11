@@ -36,21 +36,21 @@ def xep_loai(diem):
 df["Xep_loai"] = df["Tong_ket"].apply(xep_loai)
 
 # 5. Tieu de va bang diem
-st.title("QUAN LY DIEM SINH VIEN")
+st.title("QUẢN LÝ ĐIỂM SINH VIÊN")
 
-st.subheader("Bang diem")
+st.subheader("Bảng điểm")
 st.dataframe(df)
 
 # 6. Thong ke
-st.subheader("Thong ke")
+st.subheader("Thống kê")
 
-st.write("Diem trung binh:", round(df["Tong_ket"].mean(), 2))
-st.write("Cao nhat:", df.loc[df["Tong_ket"].idxmax(), "Ho_ten"])
-st.write("Thap nhat:", df.loc[df["Tong_ket"].idxmin(), "Ho_ten"])
-st.write("So sinh vien dat:", (df["Tong_ket"] >= 5).sum())
+st.write("Điểm trung bình:", round(df["Tong_ket"].mean(), 2))
+st.write("Cao nhất:", df.loc[df["Tong_ket"].idxmax(), "Ho_ten"])
+st.write("Thấp nhất:", df.loc[df["Tong_ket"].idxmin(), "Ho_ten"])
+st.write("Số sinh viên đạt:", (df["Tong_ket"] >= 5).sum())
 
 # 7. Chon sinh vien
-st.subheader("Thong tin sinh vien")
+st.subheader("Thông tin sinh viên")
 
 ten = st.selectbox("Chon sinh vien", df["Ho_ten"])
 sv = df[df["Ho_ten"] == ten].iloc[0]
