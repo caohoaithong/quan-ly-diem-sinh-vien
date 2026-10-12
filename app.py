@@ -342,6 +342,7 @@ st.markdown('<div class="content-card">'
 
 ten = st.selectbox("🔎 Chọn sinh viên cần tra cứu", df["Họ và tên"])
 sv = df[df["Họ và tên"] == ten].iloc[0]
+, unsafe_allow_html=True)
 
 st.markdown(
     f"<div class='student-name'>🎓 {sv['Họ và tên']}</div>",
@@ -360,7 +361,6 @@ y.metric("🎯 XẾP LOẠI", sv["Xếp loại"])
 
 st.markdown('</div>', unsafe_allow_html=True)
 st.divider()
-, unsafe_allow_html=True)
 
 
 # 10. Biểu đồ
