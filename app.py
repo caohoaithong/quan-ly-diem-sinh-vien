@@ -449,7 +449,7 @@ st.divider()
 st.markdown(
     "<div style='text-align:center; color:gray; font-size:12px;'>"
     "QUẢN LÝ ĐIỂM SINH VIÊN<br>"
-    "Người tạo: HỌ TÊN CỦA BẠN | MSSV: MÃ SỐ CỦA BẠN"
+    "Người tạo: Cao Hoài Thông | MSSV: 052208010748"
     "</div>",
     unsafe_allow_html=True
 )
