@@ -338,11 +338,10 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="content-card">'
+st.markdown('<div class="content-card">', unsafe_allow_html=True)
 
 ten = st.selectbox("🔎 Chọn sinh viên cần tra cứu", df["Họ và tên"])
 sv = df[df["Họ và tên"] == ten].iloc[0]
-, unsafe_allow_html=True)
 
 st.markdown(
     f"<div class='student-name'>🎓 {sv['Họ và tên']}</div>",
